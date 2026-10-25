@@ -6,17 +6,23 @@
 <meta name="format-detection" content="telephone=no">
 <title>Google API 調査</title>
 <style>
-:root{--navy1:#12224d;--navy2:#2f5fbf;--ink:#1c2330;--line:#d9dfe8;--link:#1a4fa0;--accent:var(--navy1);--accent2:var(--navy2);--soft:#f2f5fb}
+:root{--navy1:#12224d;--navy2:#2f5fbf;--ink:#1c2330;--ink-soft:#4a5568;--line:#d9dfe8;--code-bg:#f4f6fa;--link:#1a4fa0;--accent:var(--navy1);--accent2:var(--navy2);--soft:#f2f5fb}
 .ch01{--accent:hsl(280,78%,25%);--accent2:hsl(280,58%,55%);--soft:hsl(280,28%,95%)}
 body{margin:0;background:#fff;color:var(--ink);font-size:15.5px;line-height:1.85;font-family:"Segoe UI","Yu Gothic UI",Meiryo,sans-serif}
 a{color:var(--link)}
 .titlebar{background:linear-gradient(135deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;padding:34px 30px 30px}
-.titlebar .inner,.wrap{max-width:1600px;margin:0 auto}
+.titlebar .inner,.wrap,footer .inner{max-width:1600px;margin:0 auto}
 .titlebar h1{font-size:1.9em;margin:0 0 6px;color:#fff}
 .titlebar .lead,.titlebar .date{font-size:.85em;color:#e4ebfa;margin:2px 0}
 .wrap{padding:0 30px}
-section{margin:34px 0;padding:4px 26px 26px;background:linear-gradient(180deg,var(--soft,#f2f5fb),#fff)}
+.back-home{display:inline-block;padding:2px 14px;border-radius:6px;background:linear-gradient(100deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;text-decoration:none}
+.back-home svg{vertical-align:middle}
+.wrap > .backlink{margin:18px 0 0}
+.minibar{margin:34px 0 0;padding:10px 20px;border-radius:8px;background:linear-gradient(135deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;font-size:1.1em;font-weight:700}
+section{margin:20px 0 34px;padding:4px 26px 26px;background:linear-gradient(180deg,var(--soft,#f2f5fb),#fff)}
 section h1{margin:26px 0 20px;padding:14px 20px;font-size:1.5em;border-radius:8px;background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+section h1 a{color:#fff;background:transparent}
+footer{padding:18px 30px 30px;background:#fff;color:var(--ink)}
 </style>
 </head>
 <body>
@@ -26,12 +32,18 @@ section h1{margin:26px 0 20px;padding:14px 20px;font-size:1.5em;border-radius:8p
 <p class="date">📅 作成: 2026-10-25 / 更新: 2026-10-25</p>
 </div></div>
 <div class="wrap">
+<p class="backlink"><a class="back-home" href="../" title="親サイトへ戻る"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 8H3v6h4v-4h2v4h4V8h1.5z" fill="currentColor"/></svg></a></p>
+
+<p>Google が提供する API を、公式ドキュメントを根拠に 1 つずつ調べる。各 API について、できること・認証とスコープ・クォータ・制約を、あとから引ける形で資料にする。</p>
+
+<div class="minibar">調査資料</div>
 <section class="ch01" id="ch01">
-<h1>調査資料 (notes/01_research)</h1>
-<ul>
-<li><a href="notes/01_research/r261025-01-gmail-api.html">Gmail API 調査</a> — リソース・認証とスコープ・クォータ・プッシュ通知・送信</li>
-</ul>
+<h1><a href="notes/01_research/r261025-01-gmail-api.html">Gmail API 調査</a></h1>
+<p>リソース・認証とスコープ・クォータ・プッシュ通知・送信。</p>
 </section>
 </div>
+<footer><div class="inner">
+<a class="back-home" href="../" title="親サイトへ戻る"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 8H3v6h4v-4h2v4h4V8h1.5z" fill="currentColor"/></svg></a>
+</div></footer>
 </body>
 </html>
