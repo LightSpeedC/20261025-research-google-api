@@ -72,8 +72,8 @@ Gmail API は、Gmail のメールボックスの読み取り・送信・整理�
 | `gmail.settings.sharing` | ❌ **Restricted** | 重要な設定の管理。管理者用で、ドメイン全体の委任を受けたサービスアカウントのみ |
 | `https://mail.google.com/` | ❌ **Restricted** | 閲覧・作成・送信に加え完全削除も可能 |
 
-> [!NOTE]
-> **IMPORTANT**<br>メールを読むスコープ (`gmail.readonly` 等) は、本文を読めないはずの `gmail.metadata` まで含めて Restricted。送信だけなら Sensitive の `gmail.send` で足りる。`https://mail.google.com/` は、即時かつ完全な削除が要るときだけ求めるよう公式が注記している。
+> [!IMPORTANT]
+> メールを読むスコープ (`gmail.readonly` 等) は、本文を読めないはずの `gmail.metadata` まで含めて Restricted。送信だけなら Sensitive の `gmail.send` で足りる。`https://mail.google.com/` は、即時かつ完全な削除が要るときだけ求めるよう公式が注記している。
 
 出典: [Gmail API のスコープ (Google for Developers)](https://developers.google.com/workspace/gmail/api/auth/scopes)
 
@@ -128,7 +128,7 @@ Gmail API は、Gmail のメールボックスの読み取り・送信・整理�
 | `labels.list` / `labels.get` / `getProfile` | 1 |
 
 > [!NOTE]
-> **NOTE**<br>本文まで読む `messages.get` は 60 ユニット。ユーザーあたり毎分 6,000 ユニットなら、本文付きで毎分およそ 100 通が目安になる。ヘッダーだけの取得 (20 ユニット) なら 3 倍。全ユニット表は出典を参照。
+> 本文まで読む `messages.get` は 60 ユニット。ユーザーあたり毎分 6,000 ユニットなら、本文付きで毎分およそ 100 通が目安になる。ヘッダーだけの取得 (20 ユニット) なら 3 倍。全ユニット表は出典を参照。
 
 出典: [Gmail API の使用制限 (Google for Developers)](https://developers.google.com/workspace/gmail/api/reference/quota)
 
@@ -142,8 +142,8 @@ Gmail API は、Gmail のメールボックスの読み取り・送信・整理�
 4. 保存しておいた前回の `historyId` で `history.list` を呼び、差分を取る。処理後に新しい値を保存する
 5. Webhook は HTTP 200 などで確認応答になる。pull は acknowledge を明示的に呼ぶ。応答が無いと再送される
 
-> [!NOTE]
-> **WARNING**<br>`watch` は 7 日以内に再実行しないと、そのユーザーの更新が届かなくなる。公式は 1 日 1 回の再実行を勧める。通知は通常数秒で届くが、まれに遅延・欠落するため、通知が来ないときの備えとして `history.list` の定期呼び出しを用意する。
+> [!WARNING]
+> `watch` は 7 日以内に再実行しないと、そのユーザーの更新が届かなくなる。公式は 1 日 1 回の再実行を勧める。通知は通常数秒で届くが、まれに遅延・欠落するため、通知が来ないときの備えとして `history.list` の定期呼び出しを用意する。
 
 - 通知レートはユーザーごとに最大 1 秒あたり 1 件。超過分は破棄される
 - 通知の処理中に新しい通知を起こすと通知ループになりうる
@@ -174,7 +174,7 @@ Gmail API は、Gmail のメールボックスの読み取り・送信・整理�
 | `messages.import` / `messages.insert` | 157,286,400 | 150 MiB |
 
 > [!NOTE]
-> **NOTE**<br>これは media upload (`/upload/...`) の上限。JSON の `raw` に base64url で入れる経路に同じ上限が掛かるかは、確かめられていない。base64url で約 3 分の 1 大きくなるため、添付できる実サイズはこれより小さい。
+> これは media upload (`/upload/...`) の上限。JSON の `raw` に base64url で入れる経路に同じ上限が掛かるかは、確かめられていない。base64url で約 3 分の 1 大きくなるため、添付できる実サイズはこれより小さい。
 
 出典: [Gmail API の Discovery ドキュメント (Google)](https://gmail.googleapis.com/$discovery/rest?version=v1)
 

@@ -6,14 +6,14 @@
 <meta name="format-detection" content="telephone=no">
 <title>Google Calendar API 調査 - Google API 調査</title>
 <style>
-:root{--navy1:#12224d;--navy2:#2f5fbf;--ink:#1c2330;--ink-soft:#4a5568;--line:#d9dfe8;--code-bg:#f4f6fa;--link:#1a4fa0;--accent:var(--navy1);--accent2:var(--navy2);--soft:#f2f5fb}
+:root{--navy1:#12224d;--navy2:#2f5fbf;--ink:#1c2330;--ink-soft:#4a5568;--line:#d9dfe8;--code-bg:#f4f6fa;--link:#1a4fa0;--accent:var(--navy1,#12224d);--accent2:var(--navy2,#2f5fbf);--soft:#f2f5fb}
 .ch01{--accent:hsl(280,78%,25%);--accent2:hsl(280,58%,55%);--soft:hsl(280,28%,95%)}
 .ch02{--accent:hsl(210,78%,25%);--accent2:hsl(210,58%,55%);--soft:hsl(210,28%,95%)}
 .ch03{--accent:hsl(140,78%,25%);--accent2:hsl(140,58%,55%);--soft:hsl(140,28%,95%)}
 .ch04{--accent:hsl(70,78%,25%);--accent2:hsl(70,58%,55%);--soft:hsl(70,28%,95%)}
 .ch05{--accent:hsl(0,78%,25%);--accent2:hsl(0,58%,55%);--soft:hsl(0,28%,95%)}
-body{margin:0;background:#fff;color:var(--ink);font-size:15.5px;line-height:1.85;font-family:"Segoe UI","Yu Gothic UI",Meiryo,sans-serif}
-a{color:var(--link)}
+body{margin:0;background:#fff;color:var(--ink,#1c2330);font-size:15.5px;line-height:1.85;font-family:"Segoe UI","Yu Gothic UI",Meiryo,sans-serif}
+a{color:var(--link,#1a4fa0)}
 .titlebar{background:linear-gradient(135deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;padding:34px 30px 30px}
 .titlebar .inner,.wrap,footer .inner{max-width:1600px;margin:0 auto}
 .titlebar h1{font-size:1.9em;margin:0 0 6px;color:#fff}
@@ -27,19 +27,19 @@ a{color:var(--link)}
 .toc ol a::before{content:counter(tocnum) ". "}
 section{margin:34px 0;padding:4px 26px 26px;background:linear-gradient(180deg,var(--soft,#f2f5fb),#fff)}
 section h1{margin:26px 0 20px;padding:14px 20px;font-size:1.5em;border-radius:8px;background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
-section h2{margin:30px 0 12px;padding:6px 12px;font-size:1.2em;border-left:6px solid var(--accent,#12224d);background:linear-gradient(90deg,var(--soft,#f2f5fb),#fff);color:var(--ink)}
-code{background:var(--code-bg);border:1px solid var(--line);color:#17335f;padding:0 .3em;border-radius:4px;font-size:.9em}
+section h2{margin:30px 0 12px;padding:6px 12px;font-size:1.2em;border-left:6px solid var(--accent,#12224d);background:linear-gradient(90deg,var(--soft,#f2f5fb),#fff);color:var(--ink,#1c2330)}
+code{background:var(--code-bg,#f4f6fa);border:1px solid var(--line,#d9dfe8);color:#17335f;padding:0 .3em;border-radius:4px;font-size:.9em}
 .tablewrap{overflow-x:auto}
 table{border-collapse:separate;border-spacing:0;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.1);margin:10px 0}
 th{background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;padding:9px 12px;text-align:left}
-td{background:#fff;color:var(--ink);padding:9px 12px;vertical-align:top;border-top:1px solid var(--line)}
+td{background:#fff;color:var(--ink,#1c2330);padding:9px 12px;vertical-align:top;border-top:1px solid var(--line,#d9dfe8)}
 tr:nth-child(even) td{background:#fafbfe}
 td.num{text-align:right}
 td.nowrap{white-space:nowrap}
-.callout{border-left:6px solid var(--accent,#12224d);background:linear-gradient(180deg,var(--soft,#f2f5fb),#fff);color:var(--ink);border-radius:0 8px 8px 0;padding:6px 16px;margin:14px 0}
+.callout{border-left:6px solid var(--accent,#12224d);background:linear-gradient(180deg,var(--soft,#f2f5fb),#fff);color:var(--ink,#1c2330);border-radius:0 8px 8px 0;padding:6px 16px;margin:14px 0}
 .callout strong{color:var(--accent,#12224d)}
-pre{border-left:5px solid var(--accent2,#2f5fbf);background:var(--code-bg);color:var(--ink);padding:13px 16px;overflow-x:auto}
-footer{padding:18px 30px 30px;background:#fff;color:var(--ink)}
+pre{border-left:5px solid var(--accent2,#2f5fbf);background:var(--code-bg,#f4f6fa);color:var(--ink,#1c2330);padding:13px 16px;overflow-x:auto}
+footer{padding:18px 30px 30px;background:#fff;color:var(--ink,#1c2330)}
 </style>
 </head>
 <body>
@@ -129,7 +129,7 @@ footer{padding:18px 30px 30px;background:#fff;color:var(--ink)}
 <tr><td class="nowrap">アドオン</td><td class="nowrap"><code>calendar.addons.current.event.read</code></td><td>画面で開いたイベントの閲覧</td></tr>
 <tr><td class="nowrap">アドオン</td><td class="nowrap"><code>calendar.addons.current.event.write</code></td><td>画面で開いたイベントの編集</td></tr>
 </tbody></table></div>
-<div class="callout"><strong>IMPORTANT</strong><br>各スコープが sensitive か non-sensitive かを示す公式の一覧表は、見つからなかった。公式で確かめられたのは、次の 2 点だけ。<br>・Google の検証ガイドが、sensitive の例として「Google カレンダーに保存されたイベントの閲覧」を挙げている<br>・区分は、Cloud Console の Google Auth platform &gt; Data Access で、スコープを追加する画面に non-sensitive・sensitive・restricted の 3 つの節として出る (静的な一覧表ではない)</div>
+<div class="callout callout-important">各スコープが sensitive か non-sensitive かを示す公式の一覧表は、見つからなかった。公式で確かめられたのは、次の 2 点だけ。<br>・Google の検証ガイドが、sensitive の例として「Google カレンダーに保存されたイベントの閲覧」を挙げている<br>・区分は、Cloud Console の Google Auth platform &gt; Data Access で、スコープを追加する画面に non-sensitive・sensitive・restricted の 3 つの節として出る (静的な一覧表ではない)</div>
 <h2>区分を探した範囲</h2>
 <ul>
 <li><strong>公式で探したが、スコープごとの区分は書かれていなかったページ:</strong> Calendar API のスコープ、OAuth 2.0 Scopes for Google APIs (Calendar の節)、Sensitive scope verification、OAuth 同意画面の設定ガイド</li>
@@ -187,7 +187,7 @@ footer{padding:18px 30px 30px;background:#fff;color:var(--ink)}
 <li>止めるときは <code>https://www.googleapis.com/calendar/v3/channels/stop</code> に <code>id</code> と <code>resourceId</code> を POST する</li>
 <li><code>Events</code> と <code>Acl</code> は<strong>カレンダーごと</strong>、<code>Settings</code> と <code>CalendarList</code> は<strong>ユーザーごとに 1 回</strong>の購読で足りる</li>
 </ul>
-<div class="callout"><strong>WARNING</strong><br>チャネルに自動更新は無い。期限が近づいたら、新しい <code>id</code> で watch をもう一度呼ぶ (新旧が並行して有効な時間帯がある)。通知は一定の割合で欠落することがあり、届かなくても同期が進む作りにする。</div>
+<div class="callout callout-warning">チャネルに自動更新は無い。期限が近づいたら、新しい <code>id</code> で watch をもう一度呼ぶ (新旧が並行して有効な時間帯がある)。通知は一定の割合で欠落することがあり、届かなくても同期が進む作りにする。</div>
 <p>出典: <a href="https://developers.google.com/workspace/calendar/api/guides/push">Calendar API のプッシュ通知 (Google for Developers)</a></p>
 
 <h2>増分同期 (syncToken)</h2>
@@ -221,7 +221,7 @@ footer{padding:18px 30px 30px;background:#fff;color:var(--ink)}
 <tr><td class="nowrap"><code>originalStartTime</code></td><td>親の繰り返しルール上の本来の開始時刻。日時が変えられていても、系列の中の位置を特定できる</td></tr>
 </tbody></table></div>
 <p>インスタンスの変更・削除は、取得したインスタンスへの PUT で行う。取り消すには <code>status</code> を <code>cancelled</code> にする。この操作で例外ができる。</p>
-<div class="callout"><strong>WARNING</strong><br>系列全体や「以降すべて」を変えたいときに、インスタンスを 1 つずつ変更しない。例外が大量にでき、カレンダーが煩雑になり、アクセスが遅くなり、通知も大量に送られる。</div>
+<div class="callout callout-caution">系列全体や「以降すべて」を変えたいときに、インスタンスを 1 つずつ変更しない。例外が大量にでき、カレンダーが煩雑になり、アクセスが遅くなり、通知も大量に送られる。</div>
 <p>出典: <a href="https://developers.google.com/workspace/calendar/api/guides/recurringevents">繰り返しイベント (Google for Developers)</a></p>
 </section>
 </div>

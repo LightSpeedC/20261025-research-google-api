@@ -81,8 +81,8 @@ Google Calendar API は RESTful API。HTTP を直接呼ぶか、Google のクラ
 | アドオン | `calendar.addons.current.event.read` | 画面で開いたイベントの閲覧 |
 | アドオン | `calendar.addons.current.event.write` | 画面で開いたイベントの編集 |
 
-> [!NOTE]
-> **IMPORTANT**<br>各スコープが sensitive か non-sensitive かを示す公式の一覧表は、見つからなかった。公式で確かめられたのは、次の 2 点だけ。<br>・Google の検証ガイドが、sensitive の例として「Google カレンダーに保存されたイベントの閲覧」を挙げている<br>・区分は、Cloud Console の Google Auth platform > Data Access で、スコープを追加する画面に non-sensitive・sensitive・restricted の 3 つの節として出る (静的な一覧表ではない)
+> [!IMPORTANT]
+> 各スコープが sensitive か non-sensitive かを示す公式の一覧表は、見つからなかった。公式で確かめられたのは、次の 2 点だけ。<br>・Google の検証ガイドが、sensitive の例として「Google カレンダーに保存されたイベントの閲覧」を挙げている<br>・区分は、Cloud Console の Google Auth platform > Data Access で、スコープを追加する画面に non-sensitive・sensitive・restricted の 3 つの節として出る (静的な一覧表ではない)
 
 ### 区分を探した範囲
 
@@ -138,8 +138,8 @@ Google Calendar API は RESTful API。HTTP を直接呼ぶか、Google のクラ
 - 止めるときは `https://www.googleapis.com/calendar/v3/channels/stop` に `id` と `resourceId` を POST する
 - `Events` と `Acl` は**カレンダーごと**、`Settings` と `CalendarList` は**ユーザーごとに 1 回**の購読で足りる
 
-> [!NOTE]
-> **WARNING**<br>チャネルに自動更新は無い。期限が近づいたら、新しい `id` で watch をもう一度呼ぶ (新旧が並行して有効な時間帯がある)。通知は一定の割合で欠落することがあり、届かなくても同期が進む作りにする。
+> [!WARNING]
+> チャネルに自動更新は無い。期限が近づいたら、新しい `id` で watch をもう一度呼ぶ (新旧が並行して有効な時間帯がある)。通知は一定の割合で欠落することがあり、届かなくても同期が進む作りにする。
 
 出典: [Calendar API のプッシュ通知 (Google for Developers)](https://developers.google.com/workspace/calendar/api/guides/push)
 
@@ -172,8 +172,8 @@ Google Calendar API は RESTful API。HTTP を直接呼ぶか、Google のクラ
 
 インスタンスの変更・削除は、取得したインスタンスへの PUT で行う。取り消すには `status` を `cancelled` にする。この操作で例外ができる。
 
-> [!NOTE]
-> **WARNING**<br>系列全体や「以降すべて」を変えたいときに、インスタンスを 1 つずつ変更しない。例外が大量にでき、カレンダーが煩雑になり、アクセスが遅くなり、通知も大量に送られる。
+> [!CAUTION]
+> 系列全体や「以降すべて」を変えたいときに、インスタンスを 1 つずつ変更しない。例外が大量にでき、カレンダーが煩雑になり、アクセスが遅くなり、通知も大量に送られる。
 
 出典: [繰り返しイベント (Google for Developers)](https://developers.google.com/workspace/calendar/api/guides/recurringevents)
 
