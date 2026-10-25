@@ -8,7 +8,8 @@
 <style>
 :root{--navy1:#12224d;--navy2:#2f5fbf;--ink:#1c2330;--ink-soft:#4a5568;--line:#d9dfe8;--code-bg:#f4f6fa;--link:#1a4fa0;--accent:var(--navy1);--accent2:var(--navy2);--soft:#f2f5fb}
 .ch01{--accent:hsl(280,78%,25%);--accent2:hsl(280,58%,55%);--soft:hsl(280,28%,95%)}
-.ch02{--accent:hsl(0,78%,25%);--accent2:hsl(0,58%,55%);--soft:hsl(0,28%,95%)}
+.ch02{--accent:hsl(140,78%,25%);--accent2:hsl(140,58%,55%);--soft:hsl(140,28%,95%)}
+.ch03{--accent:hsl(0,78%,25%);--accent2:hsl(0,58%,55%);--soft:hsl(0,28%,95%)}
 body{margin:0;background:#fff;color:var(--ink);font-size:15.5px;line-height:1.85;font-family:"Segoe UI","Yu Gothic UI",Meiryo,sans-serif}
 a{color:var(--link)}
 .titlebar{background:linear-gradient(135deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;padding:34px 30px 30px}
@@ -54,6 +55,13 @@ footer{padding:18px 30px 30px;background:#fff;color:var(--ink)}
 <ul>
 <li>共通ルール「重大な操作の確認方法」の、commit・push の指示待ちを上書きする。理由: 資料を 1 件ずつ積む作業で、指示待ちが毎回の往復になるため</li>
 <li>1 つの commit は 1 つの目的にする</li>
+</ul>
+</section>
+<section class="ch03" id="ch03">
+<h1>ルールの案に添えるもの</h1>
+<p>適用条件: ルール (共通・ローカル) を書く・変える案を出すとき。</p>
+<ul>
+<li>案に、全章を Grep した語と、見つかった既存の項を 1 行で添える。見つからなければ「なし」と書く</li>
 </ul>
 </section>
 </div>
