@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<title>Gmail API 調査 - Google API 調査</title>
+<style>
+:root{--navy1:#12224d;--navy2:#2f5fbf;--ink:#1c2330;--ink-soft:#4a5568;--line:#d9dfe8;--code-bg:#f4f6fa;--link:#1a4fa0;--accent:var(--navy1);--accent2:var(--navy2);--soft:#f2f5fb}
+.ch01{--accent:hsl(280,78%,25%);--accent2:hsl(280,58%,55%);--soft:hsl(280,28%,95%)}
+.ch02{--accent:hsl(186.7,78%,25%);--accent2:hsl(186.7,58%,55%);--soft:hsl(186.7,28%,95%)}
+.ch03{--accent:hsl(93.3,78%,25%);--accent2:hsl(93.3,58%,55%);--soft:hsl(93.3,28%,95%)}
+.ch04{--accent:hsl(0,78%,25%);--accent2:hsl(0,58%,55%);--soft:hsl(0,28%,95%)}
+body{margin:0;background:#fff;color:var(--ink);font-size:15.5px;line-height:1.85;font-family:"Segoe UI","Yu Gothic UI",Meiryo,sans-serif}
+a{color:var(--link)}
+.titlebar{background:linear-gradient(135deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;padding:34px 30px 30px}
+.titlebar .inner,.wrap,footer .inner{max-width:1600px;margin:0 auto}
+.titlebar h1{font-size:1.9em;margin:0 0 6px;color:#fff}
+.titlebar .lead,.titlebar .date{font-size:.85em;color:#e4ebfa;margin:2px 0}
+.wrap{padding:0 30px}
+.back-home{display:inline-block;margin-top:18px;padding:2px 14px;border-radius:6px;background:linear-gradient(100deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;text-decoration:none}
+.back-home svg{vertical-align:middle}
+.toc ol{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;counter-reset:tocnum}
+.toc li{counter-increment:tocnum}
+.toc ol a{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;width:310px;max-width:100%;box-sizing:border-box;padding:2px 12px;border-radius:6px;background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;font-weight:700;text-decoration:none}
+.toc ol a::before{content:counter(tocnum) ". "}
+section{margin:34px 0;padding:4px 26px 26px;background:linear-gradient(180deg,var(--soft,#f2f5fb),#fff)}
+section h1{margin:26px 0 20px;padding:14px 20px;font-size:1.5em;border-radius:8px;background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+section h2{margin:30px 0 12px;padding:6px 12px;font-size:1.2em;border-left:6px solid var(--accent,#12224d);background:linear-gradient(90deg,var(--soft,#f2f5fb),#fff);color:var(--ink)}
+code{background:var(--code-bg);border:1px solid var(--line);color:#17335f;padding:0 .3em;border-radius:4px;font-size:.9em}
+.tablewrap{overflow-x:auto}
+table{border-collapse:separate;border-spacing:0;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.1);margin:10px 0}
+th{background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;padding:9px 12px;text-align:left}
+td{background:#fff;color:var(--ink);padding:9px 12px;vertical-align:top;border-top:1px solid var(--line)}
+tr:nth-child(even) td{background:#fafbfe}
+td.num{text-align:right}
+td.nowrap{white-space:nowrap}
+.badge{display:inline-block;padding:0 9px;border-radius:6px;color:#fff;white-space:nowrap;font-size:.85em}
+.b-ok{background:linear-gradient(100deg,#1d7a3c,#45b56c)}
+.b-warn{background:linear-gradient(100deg,#b8620a,#f0a548)}
+.b-ng{background:linear-gradient(100deg,#a51f22,#e05a5c)}
+.callout{border-left:6px solid var(--accent,#12224d);background:linear-gradient(180deg,var(--soft,#f2f5fb),#fff);color:var(--ink);border-radius:0 8px 8px 0;padding:6px 16px;margin:14px 0}
+.callout strong{color:var(--accent,#12224d)}
+pre{border-left:5px solid var(--accent2,#2f5fbf);background:var(--code-bg);color:var(--ink);padding:13px 16px;overflow-x:auto}
+footer{padding:18px 30px 30px;background:#fff;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="titlebar"><div class="inner">
+<h1>Gmail API 調査</h1>
+<p class="lead">Google API 調査の第 1 回。Gmail API の機能・認証・クォータ・通知・送信を公式ドキュメントで確かめた</p>
+<p class="date">📅 作成: 2026-10-25 / 更新: 2026-10-25</p>
+</div></div>
+<div class="wrap">
+<a class="back-home" href="../../README.html" title="README へ戻る"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 8H3v6h4v-4h2v4h4V8h1.5z" fill="currentColor"/></svg></a>
+
+<nav class="toc"><ol>
+<li class="ch01"><a href="#ch01">概要とリソース</a></li>
+<li class="ch02"><a href="#ch02">認証とスコープ</a></li>
+<li class="ch03"><a href="#ch03">クォータ</a></li>
+<li class="ch04"><a href="#ch04">プッシュ通知と送信</a></li>
+</ol></nav>
+
+<section class="ch01" id="ch01">
+<h1>概要とリソース</h1>
+<p>Gmail API は、Gmail のメールボックスの読み取り・送信・整理・設定変更を行う RESTful API。ユーザーの認可を得て Gmail データへ触れる Web アプリの、多くの場面で最適な選択肢とされている。</p>
+<h2>主なリソース</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>リソース</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td class="nowrap"><code>messages</code></td><td>送信者・宛先・件名・本文を持つメール。作成後は内容を変更できない</td></tr>
+<tr><td class="nowrap"><code>threads</code></td><td>関連するメッセージを会話としてまとめたもの</td></tr>
+<tr><td class="nowrap"><code>labels</code></td><td>整理用の印。システムラベル (INBOX・TRASH・SPAM 等) は作成・削除できない。ユーザーラベルは作成・変更・削除できる</td></tr>
+<tr><td class="nowrap"><code>drafts</code></td><td>未送信のメッセージ。内容を差し替えられる。送信すると下書きは消え、<code>SENT</code> ラベルのメッセージができる</td></tr>
+<tr><td class="nowrap"><code>history</code></td><td>メールボックスの変更履歴。<code>historyId</code> を起点に差分を取る (「プッシュ通知と送信」を参照)</td></tr>
+<tr><td class="nowrap"><code>settings</code></td><td>送信元エイリアスと署名・転送・フィルタ・不在通知・S/MIME・POP/IMAP・委任・言語</td></tr>
+</tbody></table></div>
+<h2>できること</h2>
+<ul>
+<li>読み取り専用でのメールの抽出・インデックス化・バックアップ</li>
+<li>プログラムからのメール送信</li>
+<li>フィルタによる振り分け・ラベル付け</li>
+<li>署名・転送などの設定管理 (組織全体での署名の標準化を含む)</li>
+<li>メールボックスの変更通知 (Cloud Pub/Sub 連携)</li>
+<li>同じ Google Workspace 組織内での、別ユーザーのメールボックスへの委任</li>
+</ul>
+<p>出典: <a href="https://developers.google.com/workspace/gmail/api/guides">Gmail API の概要 (Google for Developers)</a></p>
+</section>
+
+<section class="ch02" id="ch02">
+<h1>認証とスコープ</h1>
+<h2>認証情報の種類</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>種類</th><th>Gmail での使いどころ</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">API キー</td><td>公開データ用。Workspace の大半のデータは OAuth 2.0 が必要で、メールには通常使えない</td></tr>
+<tr><td class="nowrap">OAuth 2.0 クライアント ID</td><td>ユーザー所有のメールに触れる主要な手段。同意画面での承認が要る。長期の利用にはリフレッシュトークンを取る</td></tr>
+<tr><td class="nowrap">サービスアカウント</td><td>単独ではユーザーのメールに触れない。ドメイン全体の委任を設定すると組織内のユーザーのメールに触れる。有効化できるのはスーパー管理者だけ</td></tr>
+</tbody></table></div>
+<p>クライアントシークレットは、アプリのコードに平文で含めず安全に保管する。</p>
+<p>出典: <a href="https://developers.google.com/workspace/gmail/api/auth/about-auth">認証と認可の概要 (Google for Developers。Workspace API 全般の説明)</a></p>
+
+<h2>スコープ</h2>
+<p>区分は Non-sensitive / Sensitive / Restricted の 3 段階。要る範囲だけを求める。</p>
+<div class="tablewrap"><table>
+<thead><tr><th>スコープ (<code>https://www.googleapis.com/auth/</code> 以下)</th><th>区分</th><th>概要</th></tr></thead>
+<tbody>
+<tr><td class="nowrap"><code>gmail.labels</code></td><td><span class="badge b-ok">Non-sensitive</span></td><td>ラベルの閲覧と編集</td></tr>
+<tr><td class="nowrap"><code>gmail.addons.current.action.compose</code></td><td><span class="badge b-ok">Non-sensitive</span></td><td>アドオン操作時に下書きの管理とメール送信</td></tr>
+<tr><td class="nowrap"><code>gmail.addons.current.message.action</code></td><td><span class="badge b-ok">Non-sensitive</span></td><td>アドオン操作時にメッセージを閲覧</td></tr>
+<tr><td class="nowrap"><code>gmail.addons.current.message.metadata</code></td><td><span class="badge b-warn">Sensitive</span></td><td>アドオン実行時にメタデータを閲覧</td></tr>
+<tr><td class="nowrap"><code>gmail.addons.current.message.readonly</code></td><td><span class="badge b-warn">Sensitive</span></td><td>アドオン実行時にメッセージを閲覧</td></tr>
+<tr><td class="nowrap"><code>gmail.send</code></td><td><span class="badge b-warn">Sensitive</span></td><td>ユーザーの代理でメールを送信</td></tr>
+<tr><td class="nowrap"><code>gmail.readonly</code></td><td><span class="badge b-ng">Restricted</span></td><td>メールと設定の閲覧</td></tr>
+<tr><td class="nowrap"><code>gmail.compose</code></td><td><span class="badge b-ng">Restricted</span></td><td>下書きの管理とメール送信</td></tr>
+<tr><td class="nowrap"><code>gmail.insert</code></td><td><span class="badge b-ng">Restricted</span></td><td>メールボックスへのメール追加</td></tr>
+<tr><td class="nowrap"><code>gmail.modify</code></td><td><span class="badge b-ng">Restricted</span></td><td>閲覧・作成・送信。ゴミ箱を経由した即時の完全削除はできない</td></tr>
+<tr><td class="nowrap"><code>gmail.metadata</code></td><td><span class="badge b-ng">Restricted</span></td><td>ラベルやヘッダーの閲覧 (本文は不可)</td></tr>
+<tr><td class="nowrap"><code>gmail.settings.basic</code></td><td><span class="badge b-ng">Restricted</span></td><td>メール設定とフィルタの閲覧・変更</td></tr>
+<tr><td class="nowrap"><code>gmail.settings.sharing</code></td><td><span class="badge b-ng">Restricted</span></td><td>重要な設定の管理。管理者用で、ドメイン全体の委任を受けたサービスアカウントのみ</td></tr>
+<tr><td class="nowrap"><code>https://mail.google.com/</code></td><td><span class="badge b-ng">Restricted</span></td><td>閲覧・作成・送信に加え完全削除も可能</td></tr>
+</tbody></table></div>
+<div class="callout"><strong>IMPORTANT</strong><br>メールを読むスコープ (<code>gmail.readonly</code> 等) は、本文を読めないはずの <code>gmail.metadata</code> まで含めて Restricted。送信だけなら Sensitive の <code>gmail.send</code> で足りる。<code>https://mail.google.com/</code> は、即時かつ完全な削除が要るときだけ求めるよう公式が注記している。</div>
+<p>出典: <a href="https://developers.google.com/workspace/gmail/api/auth/scopes">Gmail API のスコープ (Google for Developers)</a></p>
+</section>
+
+<section class="ch03" id="ch03">
+<h1>クォータ</h1>
+<h2>上限</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>種類</th><th>上限</th></tr></thead>
+<tbody>
+<tr><td>1 分あたり・プロジェクト</td><td class="num">1,200,000 ユニット</td></tr>
+<tr><td>1 分あたり・ユーザー / プロジェクト</td><td class="num">6,000 ユニット</td></tr>
+<tr><td>1 日あたり・プロジェクト (課金のしきい値)</td><td class="num">80,000,000 ユニット</td></tr>
+</tbody></table></div>
+<ul>
+<li>ユーザー単位・プロジェクト単位の上限は「毎秒」ではなく<strong>毎分</strong></li>
+<li>1 日 80,000,000 は速度制限ではなく、超えた分に課金が発生するしきい値。引き上げの申請はできない</li>
+<li>1 通あたりの受信者数は 500 人まで</li>
+<li>2026 年 5 月 1 日以降に作ったプロジェクトには新しいクォータが適用される。それ以前のプロジェクトは従来の設定のまま</li>
+</ul>
+<h2>メソッドごとの消費 (主なもの)</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>メソッド</th><th>ユニット</th></tr></thead>
+<tbody>
+<tr><td><code>messages.list</code> / <code>messages.modify</code> / <code>threads.list</code></td><td class="num">5 (threads.list は 10)</td></tr>
+<tr><td><code>messages.get</code></td><td class="num">20 (format が full・raw・html なら 60)</td></tr>
+<tr><td><code>threads.get</code></td><td class="num">40 (format が full なら 120)</td></tr>
+<tr><td><code>messages.send</code> / <code>drafts.send</code></td><td class="num">100</td></tr>
+<tr><td><code>messages.batchModify</code> / <code>batchDelete</code></td><td class="num">50</td></tr>
+<tr><td><code>history.list</code></td><td class="num">2</td></tr>
+<tr><td><code>watch</code></td><td class="num">100</td></tr>
+<tr><td><code>labels.list</code> / <code>labels.get</code> / <code>getProfile</code></td><td class="num">1</td></tr>
+</tbody></table></div>
+<div class="callout"><strong>NOTE</strong><br>本文まで読む <code>messages.get</code> は 60 ユニット。ユーザーあたり毎分 6,000 ユニットなら、本文付きで毎分およそ 100 通が目安になる。ヘッダーだけの取得 (20 ユニット) なら 3 倍。全ユニット表は出典を参照。</div>
+<p>出典: <a href="https://developers.google.com/workspace/gmail/api/reference/quota">Gmail API の使用制限 (Google for Developers)</a></p>
+</section>
+
+<section class="ch04" id="ch04">
+<h1>プッシュ通知と送信</h1>
+<h2>プッシュ通知 (watch)</h2>
+<ol>
+<li>Cloud Pub/Sub にトピックとサブスクリプションを作り、<code>gmail-api-push@system.gserviceaccount.com</code> にトピックへの publish 権限を与える</li>
+<li><code>users/me/watch</code> にトピックと対象ラベルを指定して呼ぶ。現在の <code>historyId</code> と <code>expiration</code> が返る</li>
+<li>通知の <code>message.data</code> (Base64URL の JSON) にメールアドレスと新しい <code>historyId</code> が入る</li>
+<li>保存しておいた前回の <code>historyId</code> で <code>history.list</code> を呼び、差分を取る。処理後に新しい値を保存する</li>
+<li>Webhook は HTTP 200 などで確認応答になる。pull は acknowledge を明示的に呼ぶ。応答が無いと再送される</li>
+</ol>
+<div class="callout"><strong>WARNING</strong><br><code>watch</code> は 7 日以内に再実行しないと、そのユーザーの更新が届かなくなる。公式は 1 日 1 回の再実行を勧める。通知は通常数秒で届くが、まれに遅延・欠落するため、通知が来ないときの備えとして <code>history.list</code> の定期呼び出しを用意する。</div>
+<ul>
+<li>通知レートはユーザーごとに最大 1 秒あたり 1 件。超過分は破棄される</li>
+<li>通知の処理中に新しい通知を起こすと通知ループになりうる</li>
+<li>インストール型アプリやモバイル端末などユーザー所有のデバイスには、公式はポーリングによる同期を勧める</li>
+</ul>
+<p>出典: <a href="https://developers.google.com/workspace/gmail/api/guides/push">Gmail のプッシュ通知 (Google for Developers)</a></p>
+
+<h2>メール送信</h2>
+<pre><code class="language-text">1. RFC 2822 準拠の MIME メッセージを作る (添付はマルチパート)
+2. base64url でエンコードして、メッセージの raw に入れる
+3. messages.send (下書きなら drafts.send) を呼ぶ</code></pre>
+<ul>
+<li>返信を同じスレッドにまとめる条件は、<code>Subject</code> の一致と、<code>References</code>・<code>In-Reply-To</code> の RFC 2822 どおりの設定</li>
+<li>メッセージサイズの上限は、取得したページに記載が無かった。別の公式ドキュメントで確かめる</li>
+</ul>
+<p>出典: <a href="https://developers.google.com/workspace/gmail/api/guides/sending">メールの送信 (Google for Developers)</a></p>
+</section>
+
+</div>
+<footer><div class="inner">
+<a class="back-home" style="margin-top:0" href="../../README.html" title="README へ戻る"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 8H3v6h4v-4h2v4h4V8h1.5z" fill="currentColor"/></svg></a>
+</div></footer>
+</body>
+</html>
