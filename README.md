@@ -18,9 +18,13 @@ Google が提供する API を、公式ドキュメントを根拠に 1 つず�
 
 リソース・スコープ・クォータ・プッシュ通知と増分同期・繰り返し予定。
 
+### 3. [Google Tasks API 調査](notes/01_research/r261025-03-tasks-api.md)
+
+エンドポイント・フィールド・一覧と移動・上限・スコープとクォータ。
+
 ## ルール
 
-### 3. [ローカルルール](notes/90_rules/local-rules.md)
+### 4. [ローカルルール](notes/90_rules/local-rules.md)
 
 調査資料の出典と、未確認項目の扱い。
 

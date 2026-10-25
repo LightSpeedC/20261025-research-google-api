@@ -6,12 +6,13 @@
 <meta name="format-detection" content="telephone=no">
 <title>Google API 調査</title>
 <style>
-:root{--navy1:#12224d;--navy2:#2f5fbf;--ink:#1c2330;--ink-soft:#4a5568;--line:#d9dfe8;--code-bg:#f4f6fa;--link:#1a4fa0;--accent:var(--navy1);--accent2:var(--navy2);--soft:#f2f5fb}
+:root{--navy1:#12224d;--navy2:#2f5fbf;--ink:#1c2330;--ink-soft:#4a5568;--line:#d9dfe8;--code-bg:#f4f6fa;--link:#1a4fa0;--accent:var(--navy1,#12224d);--accent2:var(--navy2,#2f5fbf);--soft:#f2f5fb}
 .ch01{--accent:hsl(280,78%,25%);--accent2:hsl(280,58%,55%);--soft:hsl(280,28%,95%)}
-.ch02{--accent:hsl(140,78%,25%);--accent2:hsl(140,58%,55%);--soft:hsl(140,28%,95%)}
-.ch03{--accent:hsl(0,78%,25%);--accent2:hsl(0,58%,55%);--soft:hsl(0,28%,95%)}
-body{margin:0;background:#fff;color:var(--ink);font-size:15.5px;line-height:1.85;font-family:"Segoe UI","Yu Gothic UI",Meiryo,sans-serif}
-a{color:var(--link)}
+.ch02{--accent:hsl(186.7,78%,25%);--accent2:hsl(186.7,58%,55%);--soft:hsl(186.7,28%,95%)}
+.ch03{--accent:hsl(93.3,78%,25%);--accent2:hsl(93.3,58%,55%);--soft:hsl(93.3,28%,95%)}
+.ch04{--accent:hsl(0,78%,25%);--accent2:hsl(0,58%,55%);--soft:hsl(0,28%,95%)}
+body{margin:0;background:#fff;color:var(--ink,#1c2330);font-size:15.5px;line-height:1.85;font-family:"Segoe UI","Yu Gothic UI",Meiryo,sans-serif}
+a{color:var(--link,#1a4fa0)}
 .titlebar{background:linear-gradient(135deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;padding:34px 30px 30px}
 .titlebar .inner,.wrap,footer .inner{max-width:1600px;margin:0 auto}
 .titlebar h1{font-size:1.9em;margin:0 0 6px;color:#fff}
@@ -24,7 +25,7 @@ a{color:var(--link)}
 section{margin:20px 0 34px;padding:4px 26px 26px;background:linear-gradient(180deg,var(--soft,#f2f5fb),#fff)}
 section h1{margin:26px 0 20px;padding:14px 20px;font-size:1.5em;border-radius:8px;background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
 section h1 a{color:#fff;background:transparent}
-footer{padding:18px 30px 30px;background:#fff;color:var(--ink)}
+footer{padding:18px 30px 30px;background:#fff;color:var(--ink,#1c2330)}
 </style>
 </head>
 <body>
@@ -47,9 +48,13 @@ footer{padding:18px 30px 30px;background:#fff;color:var(--ink)}
 <h1><a href="notes/01_research/r261025-02-calendar-api.html">Google Calendar API 調査</a></h1>
 <p>リソース・スコープ・クォータ・プッシュ通知と増分同期・繰り返し予定。</p>
 </section>
+<section class="ch03" id="ch03">
+<h1><a href="notes/01_research/r261025-03-tasks-api.html">Google Tasks API 調査</a></h1>
+<p>エンドポイント・フィールド・一覧と移動・上限・スコープとクォータ。</p>
+</section>
 
 <div class="minibar">ルール</div>
-<section class="ch03" id="ch03">
+<section class="ch04" id="ch04">
 <h1><a href="notes/90_rules/local-rules.html">ローカルルール</a></h1>
 <p>調査資料の出典と、未確認項目の扱い。</p>
 </section>

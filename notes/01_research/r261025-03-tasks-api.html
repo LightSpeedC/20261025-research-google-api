@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<title>Google Tasks API 調査 - Google API 調査</title>
+<style>
+:root{--navy1:#12224d;--navy2:#2f5fbf;--ink:#1c2330;--ink-soft:#4a5568;--line:#d9dfe8;--code-bg:#f4f6fa;--link:#1a4fa0;--accent:var(--navy1,#12224d);--accent2:var(--navy2,#2f5fbf);--soft:#f2f5fb}
+.ch01{--accent:hsl(280,78%,25%);--accent2:hsl(280,58%,55%);--soft:hsl(280,28%,95%)}
+.ch02{--accent:hsl(186.7,78%,25%);--accent2:hsl(186.7,58%,55%);--soft:hsl(186.7,28%,95%)}
+.ch03{--accent:hsl(93.3,78%,25%);--accent2:hsl(93.3,58%,55%);--soft:hsl(93.3,28%,95%)}
+.ch04{--accent:hsl(0,78%,25%);--accent2:hsl(0,58%,55%);--soft:hsl(0,28%,95%)}
+body{margin:0;background:#fff;color:var(--ink,#1c2330);font-size:15.5px;line-height:1.85;font-family:"Segoe UI","Yu Gothic UI",Meiryo,sans-serif}
+a{color:var(--link,#1a4fa0)}
+.titlebar{background:linear-gradient(135deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;padding:34px 30px 30px}
+.titlebar .inner,.wrap,footer .inner{max-width:1600px;margin:0 auto}
+.titlebar h1{font-size:1.9em;margin:0 0 6px;color:#fff}
+.titlebar .lead,.titlebar .date{font-size:.85em;color:#e4ebfa;margin:2px 0}
+.wrap{padding:0 30px}
+.back-home{display:inline-block;margin-top:18px;padding:2px 14px;border-radius:6px;background:linear-gradient(100deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;text-decoration:none}
+.back-home svg{vertical-align:middle}
+.toc ol{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;counter-reset:tocnum}
+.toc li{counter-increment:tocnum}
+.toc ol a{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;width:310px;max-width:100%;box-sizing:border-box;padding:2px 12px;border-radius:6px;background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;font-weight:700;text-decoration:none}
+.toc ol a::before{content:counter(tocnum) ". "}
+section{margin:34px 0;padding:4px 26px 26px;background:linear-gradient(180deg,var(--soft,#f2f5fb),#fff)}
+section h1{margin:26px 0 20px;padding:14px 20px;font-size:1.5em;border-radius:8px;background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+section h2{margin:30px 0 12px;padding:6px 12px;font-size:1.2em;border-left:6px solid var(--accent,#12224d);background:linear-gradient(90deg,var(--soft,#f2f5fb),#fff);color:var(--ink,#1c2330)}
+code{background:var(--code-bg,#f4f6fa);border:1px solid var(--line,#d9dfe8);color:#17335f;padding:0 .3em;border-radius:4px;font-size:.9em}
+.tablewrap{overflow-x:auto}
+table{border-collapse:separate;border-spacing:0;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.1);margin:10px 0}
+th{background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;padding:9px 12px;text-align:left}
+td{background:#fff;color:var(--ink,#1c2330);padding:9px 12px;vertical-align:top;border-top:1px solid var(--line,#d9dfe8)}
+tr:nth-child(even) td{background:#fafbfe}
+td.num{text-align:right}
+td.nowrap{white-space:nowrap}
+.callout{border-left:6px solid var(--accent,#12224d);background:linear-gradient(180deg,var(--soft,#f2f5fb),#fff);color:var(--ink,#1c2330);border-radius:0 8px 8px 0;padding:6px 16px;margin:14px 0}
+.callout strong{color:var(--accent,#12224d)}
+footer{padding:18px 30px 30px;background:#fff;color:var(--ink,#1c2330)}
+</style>
+</head>
+<body>
+<div class="titlebar"><div class="inner">
+<h1>Google Tasks API 調査</h1>
+<p class="lead">Google API 調査の第 3 回。Tasks API (ToDo リスト) のリソース・フィールド・一覧と移動・スコープとクォータを公式ドキュメントで確かめた</p>
+<p class="date">📅 作成: 2026-10-25 / 更新: 2026-10-25</p>
+</div></div>
+<div class="wrap">
+<a class="back-home" href="../../README.html" title="README へ戻る"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 8H3v6h4v-4h2v4h4V8h1.5z" fill="currentColor"/></svg></a>
+
+<nav class="toc"><ol>
+<li class="ch01"><a href="#ch01">概要とエンドポイント</a></li>
+<li class="ch02"><a href="#ch02">Task と TaskList のフィールド</a></li>
+<li class="ch03"><a href="#ch03">一覧・移動と上限</a></li>
+<li class="ch04"><a href="#ch04">スコープとクォータ</a></li>
+</ol></nav>
+
+<section class="ch01" id="ch01">
+<h1>概要とエンドポイント</h1>
+<p>Google Tasks API は、Google Tasks のコンテンツとメタデータを、プログラムから検索・読み取り・更新するための REST API。自社サービスを Google Tasks につなぐ使い方と、Apps Script での自動化 (メールや文書の操作をきっかけにタスクを作る、外部システムのデータでリストを定期更新する) が、公式の概要に挙がっている。</p>
+<p>ベース URL は <code>https://tasks.googleapis.com</code>。リソースは <code>tasklists</code> (リスト) と <code>tasks</code> (タスク) の 2 つ。</p>
+<h2>tasklists</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>メソッド</th><th>HTTP</th><th>パス</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td class="nowrap"><code>list</code></td><td class="nowrap"><code>GET</code></td><td><code>/tasks/v1/users/@me/lists</code></td><td>リストの一覧</td></tr>
+<tr><td class="nowrap"><code>get</code></td><td class="nowrap"><code>GET</code></td><td><code>/tasks/v1/users/@me/lists/{tasklist}</code></td><td>指定のリストを取得</td></tr>
+<tr><td class="nowrap"><code>insert</code></td><td class="nowrap"><code>POST</code></td><td><code>/tasks/v1/users/@me/lists</code></td><td>リストを作成</td></tr>
+<tr><td class="nowrap"><code>patch</code></td><td class="nowrap"><code>PATCH</code></td><td><code>/tasks/v1/users/@me/lists/{tasklist}</code></td><td>部分更新</td></tr>
+<tr><td class="nowrap"><code>update</code></td><td class="nowrap"><code>PUT</code></td><td><code>/tasks/v1/users/@me/lists/{tasklist}</code></td><td>更新</td></tr>
+<tr><td class="nowrap"><code>delete</code></td><td class="nowrap"><code>DELETE</code></td><td><code>/tasks/v1/users/@me/lists/{tasklist}</code></td><td>リストを削除</td></tr>
+</tbody></table></div>
+<h2>tasks</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>メソッド</th><th>HTTP</th><th>パス</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td class="nowrap"><code>list</code></td><td class="nowrap"><code>GET</code></td><td><code>/tasks/v1/lists/{tasklist}/tasks</code></td><td>タスクの一覧</td></tr>
+<tr><td class="nowrap"><code>get</code></td><td class="nowrap"><code>GET</code></td><td><code>/tasks/v1/lists/{tasklist}/tasks/{task}</code></td><td>指定のタスクを取得</td></tr>
+<tr><td class="nowrap"><code>insert</code></td><td class="nowrap"><code>POST</code></td><td><code>/tasks/v1/lists/{tasklist}/tasks</code></td><td>タスクを作成</td></tr>
+<tr><td class="nowrap"><code>patch</code></td><td class="nowrap"><code>PATCH</code></td><td><code>/tasks/v1/lists/{tasklist}/tasks/{task}</code></td><td>部分更新</td></tr>
+<tr><td class="nowrap"><code>update</code></td><td class="nowrap"><code>PUT</code></td><td><code>/tasks/v1/lists/{tasklist}/tasks/{task}</code></td><td>更新</td></tr>
+<tr><td class="nowrap"><code>delete</code></td><td class="nowrap"><code>DELETE</code></td><td><code>/tasks/v1/lists/{tasklist}/tasks/{task}</code></td><td>タスクを削除</td></tr>
+<tr><td class="nowrap"><code>move</code></td><td class="nowrap"><code>POST</code></td><td><code>/tasks/v1/lists/{tasklist}/tasks/{task}/move</code></td><td>別の位置 (別のリストを含む) へ移動</td></tr>
+<tr><td class="nowrap"><code>clear</code></td><td class="nowrap"><code>POST</code></td><td><code>/tasks/v1/lists/{tasklist}/clear</code></td><td>完了済みのタスクをクリア (非表示にする)</td></tr>
+</tbody></table></div>
+<p>出典: <a href="https://developers.google.com/workspace/tasks">Google Tasks API の概要</a> ・ <a href="https://developers.google.com/workspace/tasks/reference/rest">Tasks API REST リファレンス (Google for Developers)</a></p>
+</section>
+
+<section class="ch02" id="ch02">
+<h1>Task と TaskList のフィールド</h1>
+<h2>Task</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>フィールド</th><th>型</th><th>読み取り専用</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td class="nowrap"><code>id</code> / <code>etag</code></td><td>string</td><td>明記なし</td><td>識別子と ETag</td></tr>
+<tr><td class="nowrap"><code>title</code></td><td>string</td><td>いいえ</td><td>タスク名。最大 1024 文字</td></tr>
+<tr><td class="nowrap"><code>notes</code></td><td>string</td><td>いいえ</td><td>メモ。最大 8192 文字。Google ドキュメントから割り当てられたタスクには設定できない</td></tr>
+<tr><td class="nowrap"><code>status</code></td><td>string</td><td>いいえ</td><td><code>needsAction</code> または <code>completed</code></td></tr>
+<tr><td class="nowrap"><code>due</code></td><td>RFC 3339</td><td>いいえ</td><td>予定日 (下の IMPORTANT を参照)</td></tr>
+<tr><td class="nowrap"><code>completed</code></td><td>RFC 3339</td><td>明記なし</td><td>完了日時。未完了なら省略される</td></tr>
+<tr><td class="nowrap"><code>deleted</code></td><td>boolean</td><td>いいえ</td><td>削除済みか。既定 <code>false</code>。割り当てられたタスクでは読み取り専用</td></tr>
+<tr><td class="nowrap"><code>hidden</code></td><td>boolean</td><td>はい</td><td>リストをクリアした時点で完了していたタスクが <code>true</code></td></tr>
+<tr><td class="nowrap"><code>parent</code></td><td>string</td><td>はい</td><td>親タスクの ID。トップレベルでは省略される。変更は <code>move</code></td></tr>
+<tr><td class="nowrap"><code>position</code></td><td>string</td><td>はい</td><td>同じ階層での並び順。辞書順で比べる。変更は <code>move</code></td></tr>
+<tr><td class="nowrap"><code>links[]</code></td><td>object[]</td><td>はい</td><td>関連リンク (<code>type</code>・<code>description</code>・<code>link</code>)。<code>type</code> の例は <code>email</code>・<code>generic</code>・<code>chat_message</code>・<code>keep_note</code></td></tr>
+<tr><td class="nowrap"><code>webViewLink</code></td><td>string</td><td>はい</td><td>Web UI で開く絶対 URL</td></tr>
+<tr><td class="nowrap"><code>assignmentInfo</code></td><td>object</td><td>はい</td><td>割り当てられたタスクの出所 (<code>linkToTask</code>・<code>surfaceType</code>・<code>driveResourceInfo</code>・<code>spaceInfo</code>)</td></tr>
+<tr><td class="nowrap"><code>updated</code> / <code>selfLink</code> / <code>kind</code></td><td>string</td><td>はい</td><td>最終更新日時、操作用の URL、<code>tasks#task</code></td></tr>
+</tbody></table></div>
+<div class="callout callout-important"><code>due</code> は期限ではなく、<strong>そのタスクを行う予定日</strong> (カレンダーに表示される日)。RFC 3339 の形だが、設定時に時刻は捨てられ日付だけが残る。公式に「API では予定の時刻を読み書きできない」とある。時刻つきの期限を前提に設計すると誤る。</div>
+<h2>TaskList</h2>
+<ul>
+<li><code>id</code>・<code>etag</code>・<code>title</code> (最大 1024 文字)・<code>updated</code>・<code>selfLink</code>・<code>kind</code> (<code>tasks#taskList</code>)。<code>updated</code>・<code>selfLink</code>・<code>kind</code> は出力専用</li>
+</ul>
+<p>出典: <a href="https://developers.google.com/workspace/tasks/reference/rest/v1/tasks">Tasks リソース</a> ・ <a href="https://developers.google.com/workspace/tasks/reference/rest/v1/tasklists">TaskList リソース (Google for Developers)</a></p>
+</section>
+
+<section class="ch03" id="ch03">
+<h1>一覧・移動と上限</h1>
+<h2>tasks.list の主なパラメータ</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>パラメータ</th><th>既定・上限</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td class="nowrap"><code>maxResults</code></td><td>既定 20、上限 100</td><td>1 ページの件数</td></tr>
+<tr><td class="nowrap"><code>pageToken</code></td><td>-</td><td>前回の <code>nextPageToken</code> を渡す</td></tr>
+<tr><td class="nowrap"><code>showCompleted</code></td><td>既定 true</td><td>完了済みを含めるか</td></tr>
+<tr><td class="nowrap"><code>showHidden</code></td><td>既定 false</td><td>非表示を含めるか</td></tr>
+<tr><td class="nowrap"><code>showDeleted</code></td><td>既定 false</td><td>削除済みを含めるか</td></tr>
+<tr><td class="nowrap"><code>showAssigned</code></td><td>既定 false</td><td>自分に割り当てられたタスク (Docs・Chat のスペース由来) を含めるか</td></tr>
+<tr><td class="nowrap"><code>dueMin</code> / <code>dueMax</code></td><td>指定なしなら絞らない</td><td>予定日の範囲 (RFC 3339)</td></tr>
+<tr><td class="nowrap"><code>completedMin</code> / <code>completedMax</code></td><td>指定なしなら絞らない</td><td>完了日の範囲</td></tr>
+<tr><td class="nowrap"><code>updatedMin</code></td><td>指定なしなら絞らない</td><td>最終更新日時の下限</td></tr>
+</tbody></table></div>
+<div class="callout callout-warning">Web UI やモバイルアプリで完了したタスクは、<code>showHidden</code> も <code>true</code> にしないと一覧に出ない。「完了済みが取れない」ときは、まずここを疑う。</div>
+<h2>tasks.move</h2>
+<ul>
+<li><code>parent</code> (新しい親。省略でトップレベル)・<code>previous</code> (直前の兄弟。省略で先頭)・<code>destinationTasklist</code> (移動先のリスト。省略で同じリスト内) の 3 つを、クエリで渡す。リクエストボディは空</li>
+<li>親にできるのは、同じリストにあり、非表示でないタスク。割り当てタスクと繰り返しタスクは、親にも子にもできない</li>
+<li>完了済みで非表示のタスクは入れ子にできず、位置 0 にしか移せない (<code>parent</code> と <code>previous</code> を空にする)</li>
+<li>繰り返しタスクは、リストをまたぐ移動に未対応</li>
+</ul>
+<h2>上限</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>項目</th><th>上限</th><th>出典</th></tr></thead>
+<tbody>
+<tr><td>1 ユーザーのタスクリスト数</td><td class="num">2,000</td><td>.NET クライアントのリファレンス</td></tr>
+<tr><td>1 ユーザー・1 リストあたりの非表示でないタスク数</td><td class="num">20,000</td><td><code>tasks.list</code> のリファレンス</td></tr>
+<tr><td>1 ユーザーの全タスク数</td><td class="num">100,000</td><td><code>tasks.list</code> のリファレンス</td></tr>
+<tr><td>1 タスクあたりのサブタスク数</td><td class="num">2,000</td><td><code>tasks.move</code> のリファレンス</td></tr>
+</tbody></table></div>
+<p>リストの上限 2,000 は、公式の REST リファレンスのページには見つからず、Google の .NET クライアントライブラリのリファレンス (<code>googleapis.dev</code>) の <code>TasklistsResource</code> に「A user can have up to 2000 lists at a time.」とある。</p>
+<p>出典: <a href="https://developers.google.com/workspace/tasks/reference/rest/v1/tasks/list">tasks.list</a> ・ <a href="https://developers.google.com/workspace/tasks/reference/rest/v1/tasks/move">tasks.move (Google for Developers)</a> ・ <a href="https://googleapis.dev/dotnet/Google.Apis.Tasks.v1/latest/api/Google.Apis.Tasks.v1.html">Google.Apis.Tasks.v1 (.NET クライアントのリファレンス)</a></p>
+</section>
+
+<section class="ch04" id="ch04">
+<h1>スコープとクォータ</h1>
+<h2>スコープ</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>スコープ (<code>https://www.googleapis.com/auth/</code> 以下)</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td class="nowrap"><code>tasks</code></td><td>すべてのタスクの作成・編集・整理・削除</td></tr>
+<tr><td class="nowrap"><code>tasks.readonly</code></td><td>タスクの閲覧のみ</td></tr>
+</tbody></table></div>
+<ul>
+<li>公式は、できるだけ範囲の狭いスコープを選ぶよう求めている</li>
+<li><code>tasks.move</code> は <code>tasks</code> だけを要求する。<code>tasks.list</code> は <code>tasks</code> と <code>tasks.readonly</code> のどちらでもよい</li>
+<li>公開アプリで該当するスコープを使うときは、アプリの検証が要る</li>
+</ul>
+<div class="callout callout-important">各スコープが sensitive か non-sensitive かは、公式の Tasks のスコープのページに書かれていなかった。Cloud Console の Data Access で見る形で、静的な一覧表は見つからなかった。非公式の情報にも、区分を示すページは見つからなかった。</div>
+<p>探した範囲: Tasks API のスコープのページ、<code>Sensitive scope verification</code>。後者は、Calendar の調査で、スコープごとの区分表が無いことを確かめたページ。</p>
+<p>出典: <a href="https://developers.google.com/workspace/tasks/auth">Tasks API のスコープ</a> ・ <a href="https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification">Sensitive scope verification (Google for Developers)</a></p>
+<h2>クォータ</h2>
+<ul>
+<li>1 日 50,000 クエリ (courtesy の上限)</li>
+<li>プロジェクトごとに異なる。引き上げは Cloud Console の「Quotas &amp; System Limits」から申請できるが、承認は保証されず、大幅な増加は時間がかかることがある</li>
+<li>サービスアカウントの呼び出しは、単一のアカウントとして扱われる</li>
+<li>1 分あたりの上限、エラーの種類と対処は、公式のこのページに書かれていなかった</li>
+</ul>
+<p>探した範囲: 上のページと、毎分の上限・429 の検索。他の API (Health API・Admin SDK 等) の毎分の値は出たが、Tasks 固有の値を示す公式・非公式の情報は見つからなかった。</p>
+<p>出典: <a href="https://developers.google.com/workspace/tasks/limits">Tasks API の割り当てと使用量上限 (Google for Developers)</a></p>
+</section>
+</div>
+<footer><div class="inner">
+<a class="back-home" style="margin-top:0" href="../../README.html" title="README へ戻る"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 8H3v6h4v-4h2v4h4V8h1.5z" fill="currentColor"/></svg></a>
+</div></footer>
+</body>
+</html>
