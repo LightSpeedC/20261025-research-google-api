@@ -77,6 +77,28 @@ Gmail API は、Gmail のメールボックスの読み取り・送信・整理�
 
 出典: [Gmail API のスコープ (Google for Developers)](https://developers.google.com/workspace/gmail/api/auth/scopes)
 
+### リフレッシュトークンが失効する条件
+
+- ユーザーがアプリのアクセスを取り消した
+- 6 か月間使われなかった
+- ユーザーがパスワードを変え、そのトークンに Gmail のスコープが含まれている
+- ユーザーアカウントが付与済みのトークンの上限を超えた。OAuth クライアント ID ごとに 1 つの Google アカウントあたり 100 個で、超えると最も古いものが警告なく無効になる (サービスアカウントは対象外)
+- 時間制限付きアクセスの期限が切れた
+- 管理者が、アプリのスコープに含まれるサービスを Restricted にした (エラー `admin_policy_enforced`)
+- 同意画面が外部ユーザー向けで、公開状態が「テスト」のプロジェクトは、有効期間が **7 日**になる (`openid`・`userinfo.email`・`userinfo.profile` だけを求める場合を除く)
+
+出典: [OAuth 2.0 の概要 (Google for Developers)](https://developers.google.com/identity/protocols/oauth2)
+
+### 制限付きスコープの審査
+
+- 除外に当たらなければ、アプリ審査が要る。スコープの必要性の説明、Cloud Console での宣言、デモ動画の提出などで構成される
+- 制限付きスコープのデータを**サーバーに保存または送信する**と、セキュリティ評価 (CASA) が要る。評価は Google が認定した独立の機関が行う
+- 評価の承認から**最低 12 か月ごと**に再評価が要る。新しい制限付きスコープを足したときも、前の評価に含まれていなければ再評価になることがある
+- 審査の除外: 個人利用、テスト用ユーザーだけに公開している開発・テスト段階、サービスアカウントで自社データだけを扱う場合、Workspace 組織内だけで使うアプリ (Internal)
+- 目安は数週間。先にブランド審査 (通常 2〜3 営業日) を終える
+
+出典: [Restricted scope verification (Google for Developers)](https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification)
+
 ## 3. クォータ
 
 ### 上限
@@ -138,8 +160,22 @@ Gmail API は、Gmail のメールボックスの読み取り・送信・整理�
 ```
 
 - 返信を同じスレッドにまとめる条件は、`Subject` の一致と、`References`・`In-Reply-To` の RFC 2822 どおりの設定
-- メッセージサイズの上限は、取得したページに記載が無かった。別の公式ドキュメントで確かめる
 
 出典: [メールの送信 (Google for Developers)](https://developers.google.com/workspace/gmail/api/guides/sending)
+
+### メッセージサイズの上限
+
+公式のガイド・リファレンス (送信ガイド、アップロードのガイド、`messages.send` のリファレンス、クォータ) には、数値の記載が無かった。Google が配布する API 定義 (Discovery ドキュメント) の media upload の `maxSize` には、次の値がある。
+
+| メソッド | maxSize (バイト) | 換算 |
+|---|---:|---:|
+| `messages.send` | 36,700,160 | 35 MiB |
+| `drafts.create` / `drafts.update` / `drafts.send` | 36,700,160 | 35 MiB |
+| `messages.import` / `messages.insert` | 157,286,400 | 150 MiB |
+
+> [!NOTE]
+> **NOTE**<br>これは media upload (`/upload/...`) の上限。JSON の `raw` に base64url で入れる経路に同じ上限が掛かるかは、確かめられていない。base64url で約 3 分の 1 大きくなるため、添付できる実サイズはこれより小さい。
+
+出典: [Gmail API の Discovery ドキュメント (Google)](https://gmail.googleapis.com/$discovery/rest?version=v1)
 
 [README へ戻る](../../README.md)

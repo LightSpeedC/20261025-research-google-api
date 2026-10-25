@@ -122,6 +122,28 @@ footer{padding:18px 30px 30px;background:#fff;color:var(--ink)}
 </tbody></table></div>
 <div class="callout"><strong>IMPORTANT</strong><br>メールを読むスコープ (<code>gmail.readonly</code> 等) は、本文を読めないはずの <code>gmail.metadata</code> まで含めて Restricted。送信だけなら Sensitive の <code>gmail.send</code> で足りる。<code>https://mail.google.com/</code> は、即時かつ完全な削除が要るときだけ求めるよう公式が注記している。</div>
 <p>出典: <a href="https://developers.google.com/workspace/gmail/api/auth/scopes">Gmail API のスコープ (Google for Developers)</a></p>
+
+<h2>リフレッシュトークンが失効する条件</h2>
+<ul>
+<li>ユーザーがアプリのアクセスを取り消した</li>
+<li>6 か月間使われなかった</li>
+<li>ユーザーがパスワードを変え、そのトークンに Gmail のスコープが含まれている</li>
+<li>ユーザーアカウントが付与済みのトークンの上限を超えた。OAuth クライアント ID ごとに 1 つの Google アカウントあたり 100 個で、超えると最も古いものが警告なく無効になる (サービスアカウントは対象外)</li>
+<li>時間制限付きアクセスの期限が切れた</li>
+<li>管理者が、アプリのスコープに含まれるサービスを Restricted にした (エラー <code>admin_policy_enforced</code>)</li>
+<li>同意画面が外部ユーザー向けで、公開状態が「テスト」のプロジェクトは、有効期間が <strong>7 日</strong>になる (<code>openid</code>・<code>userinfo.email</code>・<code>userinfo.profile</code> だけを求める場合を除く)</li>
+</ul>
+<p>出典: <a href="https://developers.google.com/identity/protocols/oauth2">OAuth 2.0 の概要 (Google for Developers)</a></p>
+
+<h2>制限付きスコープの審査</h2>
+<ul>
+<li>除外に当たらなければ、アプリ審査が要る。スコープの必要性の説明、Cloud Console での宣言、デモ動画の提出などで構成される</li>
+<li>制限付きスコープのデータを<strong>サーバーに保存または送信する</strong>と、セキュリティ評価 (CASA) が要る。評価は Google が認定した独立の機関が行う</li>
+<li>評価の承認から<strong>最低 12 か月ごと</strong>に再評価が要る。新しい制限付きスコープを足したときも、前の評価に含まれていなければ再評価になることがある</li>
+<li>審査の除外: 個人利用、テスト用ユーザーだけに公開している開発・テスト段階、サービスアカウントで自社データだけを扱う場合、Workspace 組織内だけで使うアプリ (Internal)</li>
+<li>目安は数週間。先にブランド審査 (通常 2〜3 営業日) を終える</li>
+</ul>
+<p>出典: <a href="https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification">Restricted scope verification (Google for Developers)</a></p>
 </section>
 
 <section class="ch03" id="ch03">
@@ -181,9 +203,19 @@ footer{padding:18px 30px 30px;background:#fff;color:var(--ink)}
 3. messages.send (下書きなら drafts.send) を呼ぶ</code></pre>
 <ul>
 <li>返信を同じスレッドにまとめる条件は、<code>Subject</code> の一致と、<code>References</code>・<code>In-Reply-To</code> の RFC 2822 どおりの設定</li>
-<li>メッセージサイズの上限は、取得したページに記載が無かった。別の公式ドキュメントで確かめる</li>
 </ul>
 <p>出典: <a href="https://developers.google.com/workspace/gmail/api/guides/sending">メールの送信 (Google for Developers)</a></p>
+<h2>メッセージサイズの上限</h2>
+<p>公式のガイド・リファレンス (送信ガイド、アップロードのガイド、<code>messages.send</code> のリファレンス、クォータ) には、数値の記載が無かった。Google が配布する API 定義 (Discovery ドキュメント) の media upload の <code>maxSize</code> には、次の値がある。</p>
+<div class="tablewrap"><table>
+<thead><tr><th>メソッド</th><th>maxSize (バイト)</th><th>換算</th></tr></thead>
+<tbody>
+<tr><td class="nowrap"><code>messages.send</code></td><td class="num">36,700,160</td><td class="num">35 MiB</td></tr>
+<tr><td class="nowrap"><code>drafts.create</code> / <code>drafts.update</code> / <code>drafts.send</code></td><td class="num">36,700,160</td><td class="num">35 MiB</td></tr>
+<tr><td class="nowrap"><code>messages.import</code> / <code>messages.insert</code></td><td class="num">157,286,400</td><td class="num">150 MiB</td></tr>
+</tbody></table></div>
+<div class="callout"><strong>NOTE</strong><br>これは media upload (<code>/upload/...</code>) の上限。JSON の <code>raw</code> に base64url で入れる経路に同じ上限が掛かるかは、確かめられていない。base64url で約 3 分の 1 大きくなるため、添付できる実サイズはこれより小さい。</div>
+<p>出典: <a href="https://gmail.googleapis.com/$discovery/rest?version=v1">Gmail API の Discovery ドキュメント (Google)</a></p>
 </section>
 
 </div>
