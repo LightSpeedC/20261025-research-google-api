@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<title>ローカルルール - Google API 調査</title>
+<style>
+:root{--navy1:#12224d;--navy2:#2f5fbf;--ink:#1c2330;--ink-soft:#4a5568;--line:#d9dfe8;--code-bg:#f4f6fa;--link:#1a4fa0;--accent:var(--navy1);--accent2:var(--navy2);--soft:#f2f5fb}
+.ch01{--accent:hsl(280,78%,25%);--accent2:hsl(280,58%,55%);--soft:hsl(280,28%,95%)}
+.ch02{--accent:hsl(0,78%,25%);--accent2:hsl(0,58%,55%);--soft:hsl(0,28%,95%)}
+body{margin:0;background:#fff;color:var(--ink);font-size:15.5px;line-height:1.85;font-family:"Segoe UI","Yu Gothic UI",Meiryo,sans-serif}
+a{color:var(--link)}
+.titlebar{background:linear-gradient(135deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;padding:34px 30px 30px}
+.titlebar .inner,.wrap,footer .inner{max-width:1600px;margin:0 auto}
+.titlebar h1{font-size:1.9em;margin:0 0 6px;color:#fff}
+.titlebar .lead,.titlebar .date{font-size:.85em;color:#e4ebfa;margin:2px 0}
+.wrap{padding:0 30px}
+.back-home{display:inline-block;margin-top:18px;padding:2px 14px;border-radius:6px;background:linear-gradient(100deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;text-decoration:none}
+.back-home svg{vertical-align:middle}
+.minibar{margin:34px 0 0;padding:10px 20px;border-radius:8px;background:linear-gradient(135deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;font-size:1.1em;font-weight:700}
+section{margin:20px 0 34px;padding:4px 26px 26px;background:linear-gradient(180deg,var(--soft,#f2f5fb),#fff)}
+section h1{margin:26px 0 20px;padding:14px 20px;font-size:1.5em;border-radius:8px;background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+code{background:var(--code-bg);border:1px solid var(--line);color:#17335f;padding:0 .3em;border-radius:4px;font-size:.9em}
+footer{padding:18px 30px 30px;background:#fff;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="titlebar"><div class="inner">
+<h1>ローカルルール</h1>
+<p class="lead">このプロジェクトでだけ通る決めごと。共通ルールと食い違ったときは、ここが優先する</p>
+<p class="date">📅 作成: 2026-10-25 / 更新: 2026-10-25</p>
+</div></div>
+<div class="wrap">
+<a class="back-home" href="../../README.html" title="README へ戻る"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 8H3v6h4v-4h2v4h4V8h1.5z" fill="currentColor"/></svg></a>
+
+<div class="minibar">調査資料のルール</div>
+<section class="ch01" id="ch01">
+<h1>調査資料の出典と未確認項目</h1>
+<p>適用条件: この調査資料を書くとき、更新するとき。</p>
+<ul>
+<li>各章・各項目の末尾に、出典を URL つきで書く。出典のない記述を置かない</li>
+<li>公式情報で確かめられなかった項目は、「未確認」で終わらせず、公式ページを再検索する</li>
+<li>再検索で見つからなかったときは、見つからなかった旨と、探した公式ページを資料に書く。そのうえで非公式資料も探す</li>
+<li>非公式の情報は「非公式 (参考)」と明記して別に書き、公式と混ぜない。本文を確認できていない URL は載せない</li>
+<li>一次情報になりうる配布物 (API 定義の Discovery ドキュメント等) も探す。値が見つかったら、どの経路の値かを併記する</li>
+</ul>
+</section>
+
+<div class="minibar">運用のルール</div>
+<section class="ch02" id="ch02">
+<h1>作業の区切りでの commit・push</h1>
+<p>適用条件: このプロジェクトで、成果物が 1 件そろったとき (検査の通過まで)。</p>
+<ul>
+<li>共通ルール「重大な操作の確認方法」の、commit・push の指示待ちを上書きする。理由: 資料を 1 件ずつ積む作業で、指示待ちが毎回の往復になるため</li>
+<li>1 つの commit は 1 つの目的にする</li>
+</ul>
+</section>
+</div>
+<footer><div class="inner">
+<a class="back-home" style="margin-top:0" href="../../README.html" title="README へ戻る"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 8H3v6h4v-4h2v4h4V8h1.5z" fill="currentColor"/></svg></a>
+</div></footer>
+</body>
+</html>
