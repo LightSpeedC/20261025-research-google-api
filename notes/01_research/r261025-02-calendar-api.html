@@ -1,0 +1,232 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<title>Google Calendar API 調査 - Google API 調査</title>
+<style>
+:root{--navy1:#12224d;--navy2:#2f5fbf;--ink:#1c2330;--ink-soft:#4a5568;--line:#d9dfe8;--code-bg:#f4f6fa;--link:#1a4fa0;--accent:var(--navy1);--accent2:var(--navy2);--soft:#f2f5fb}
+.ch01{--accent:hsl(280,78%,25%);--accent2:hsl(280,58%,55%);--soft:hsl(280,28%,95%)}
+.ch02{--accent:hsl(210,78%,25%);--accent2:hsl(210,58%,55%);--soft:hsl(210,28%,95%)}
+.ch03{--accent:hsl(140,78%,25%);--accent2:hsl(140,58%,55%);--soft:hsl(140,28%,95%)}
+.ch04{--accent:hsl(70,78%,25%);--accent2:hsl(70,58%,55%);--soft:hsl(70,28%,95%)}
+.ch05{--accent:hsl(0,78%,25%);--accent2:hsl(0,58%,55%);--soft:hsl(0,28%,95%)}
+body{margin:0;background:#fff;color:var(--ink);font-size:15.5px;line-height:1.85;font-family:"Segoe UI","Yu Gothic UI",Meiryo,sans-serif}
+a{color:var(--link)}
+.titlebar{background:linear-gradient(135deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;padding:34px 30px 30px}
+.titlebar .inner,.wrap,footer .inner{max-width:1600px;margin:0 auto}
+.titlebar h1{font-size:1.9em;margin:0 0 6px;color:#fff}
+.titlebar .lead,.titlebar .date{font-size:.85em;color:#e4ebfa;margin:2px 0}
+.wrap{padding:0 30px}
+.back-home{display:inline-block;margin-top:18px;padding:2px 14px;border-radius:6px;background:linear-gradient(100deg,var(--navy1,#12224d),var(--navy2,#2f5fbf));color:#fff;text-decoration:none}
+.back-home svg{vertical-align:middle}
+.toc ol{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;counter-reset:tocnum}
+.toc li{counter-increment:tocnum}
+.toc ol a{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;width:310px;max-width:100%;box-sizing:border-box;padding:2px 12px;border-radius:6px;background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;font-weight:700;text-decoration:none}
+.toc ol a::before{content:counter(tocnum) ". "}
+section{margin:34px 0;padding:4px 26px 26px;background:linear-gradient(180deg,var(--soft,#f2f5fb),#fff)}
+section h1{margin:26px 0 20px;padding:14px 20px;font-size:1.5em;border-radius:8px;background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+section h2{margin:30px 0 12px;padding:6px 12px;font-size:1.2em;border-left:6px solid var(--accent,#12224d);background:linear-gradient(90deg,var(--soft,#f2f5fb),#fff);color:var(--ink)}
+code{background:var(--code-bg);border:1px solid var(--line);color:#17335f;padding:0 .3em;border-radius:4px;font-size:.9em}
+.tablewrap{overflow-x:auto}
+table{border-collapse:separate;border-spacing:0;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.1);margin:10px 0}
+th{background:linear-gradient(100deg,var(--accent,#12224d),var(--accent2,#2f5fbf));color:#fff;padding:9px 12px;text-align:left}
+td{background:#fff;color:var(--ink);padding:9px 12px;vertical-align:top;border-top:1px solid var(--line)}
+tr:nth-child(even) td{background:#fafbfe}
+td.num{text-align:right}
+td.nowrap{white-space:nowrap}
+.callout{border-left:6px solid var(--accent,#12224d);background:linear-gradient(180deg,var(--soft,#f2f5fb),#fff);color:var(--ink);border-radius:0 8px 8px 0;padding:6px 16px;margin:14px 0}
+.callout strong{color:var(--accent,#12224d)}
+pre{border-left:5px solid var(--accent2,#2f5fbf);background:var(--code-bg);color:var(--ink);padding:13px 16px;overflow-x:auto}
+footer{padding:18px 30px 30px;background:#fff;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="titlebar"><div class="inner">
+<h1>Google Calendar API 調査</h1>
+<p class="lead">Google API 調査の第 2 回。Calendar API のリソース・スコープ・クォータ・通知と同期・繰り返し予定を公式ドキュメントで確かめた</p>
+<p class="date">📅 作成: 2026-10-25 / 更新: 2026-10-25</p>
+</div></div>
+<div class="wrap">
+<a class="back-home" href="../../README.html" title="README へ戻る"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 8H3v6h4v-4h2v4h4V8h1.5z" fill="currentColor"/></svg></a>
+
+<nav class="toc"><ol>
+<li class="ch01"><a href="#ch01">概要とリソース</a></li>
+<li class="ch02"><a href="#ch02">スコープ</a></li>
+<li class="ch03"><a href="#ch03">クォータ</a></li>
+<li class="ch04"><a href="#ch04">プッシュ通知と増分同期</a></li>
+<li class="ch05"><a href="#ch05">繰り返し予定</a></li>
+</ol></nav>
+
+<section class="ch01" id="ch01">
+<h1>概要とリソース</h1>
+<p>Google Calendar API は RESTful API。HTTP を直接呼ぶか、Google のクライアントライブラリで使う。カレンダーの Web 画面にある機能の大部分を、API から扱える。</p>
+<div class="tablewrap"><table>
+<thead><tr><th>リソース</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td class="nowrap"><code>Events</code></td><td>タイトル・開始と終了・参加者などを持つ予定。単発と繰り返しがある</td></tr>
+<tr><td class="nowrap"><code>Calendars</code></td><td>イベントの集まり。説明文や既定のタイムゾーンなどのメタデータを持つ</td></tr>
+<tr><td class="nowrap"><code>CalendarList</code></td><td>ユーザーのカレンダー一覧に出るカレンダーの集まり。色や新規イベントの通知設定など、ユーザーごとの属性を持つ (<code>CalendarListEntry</code>)</td></tr>
+<tr><td class="nowrap"><code>Settings</code></td><td>タイムゾーンなど、画面上のユーザー設定</td></tr>
+<tr><td class="nowrap"><code>Acl</code></td><td>ユーザーやグループに、カレンダーへの特定のアクセス権を与えるルール</td></tr>
+</tbody></table></div>
+<p>出典: <a href="https://developers.google.com/workspace/calendar/api/guides/overview">Google Calendar API の概要 (Google for Developers)</a></p>
+
+<h2>Colors</h2>
+<ul>
+<li>メソッドは <code>get</code> だけ (<code>list</code> は無い)。<code>GET https://www.googleapis.com/calendar/v3/colors</code></li>
+<li>返るのは <code>calendar</code> と <code>event</code> の 2 つのパレットと、<code>updated</code>。いずれも読み取り専用</li>
+<li>パレットは色 ID をキーにし、各色は <code>background</code> (背景色) と <code>foreground</code> (その上に文字を描く色) を持つ</li>
+<li><code>calendarListEntry</code> の <code>colorId</code> は <code>calendar</code> パレット、イベントの <code>colorId</code> は <code>event</code> パレットを指す</li>
+<li>認証は任意。認証するなら、<code>calendar</code>・<code>calendar.readonly</code>・<code>calendar.app.created</code>・<code>calendar.calendarlist</code>・<code>calendar.calendarlist.readonly</code>・<code>calendar.events.freebusy</code>・<code>calendar.events.owned</code>・<code>calendar.events.owned.readonly</code>・<code>calendar.events.public.readonly</code> のどれか</li>
+</ul>
+<p>出典: <a href="https://developers.google.com/workspace/calendar/api/v3/reference/colors">Colors (Google for Developers)</a> ・ <a href="https://developers.google.com/workspace/calendar/api/v3/reference/colors/get">colors.get (Google for Developers)</a></p>
+
+<h2>Freebusy</h2>
+<p><code>POST https://www.googleapis.com/calendar/v3/freeBusy</code> で、複数のカレンダーやグループの、予定が入っている時間帯 (busy) を返す。</p>
+<div class="tablewrap"><table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td class="nowrap"><code>timeMin</code> / <code>timeMax</code></td><td>検索範囲の開始と終了 (RFC3339)</td></tr>
+<tr><td class="nowrap"><code>timeZone</code></td><td>応答のタイムゾーン。既定は UTC</td></tr>
+<tr><td class="nowrap"><code>items[].id</code></td><td>照会するカレンダーまたはグループの ID</td></tr>
+<tr><td class="nowrap"><code>groupExpansionMax</code></td><td>1 グループに含めるカレンダー ID の最大数。上限 100。超えるとエラー</td></tr>
+<tr><td class="nowrap"><code>calendarExpansionMax</code></td><td>空き状況を返すカレンダーの最大数。上限 50</td></tr>
+</tbody></table></div>
+<ul>
+<li>必要なスコープは、<code>calendar.readonly</code>・<code>calendar</code>・<code>calendar.events.freebusy</code>・<code>calendar.freebusy</code> のどれか</li>
+<li>応答の <code>calendars</code> に、カレンダーごとの <code>busy[]</code> (<code>start</code> は開始を含み、<code>end</code> は終了を含まない) と <code>errors[]</code> が入る。<code>groups</code> にはグループの展開結果が入る</li>
+<li>エラーの <code>reason</code> は <code>groupTooBig</code>・<code>tooManyCalendarsRequested</code>・<code>notFound</code>・<code>internalError</code>。今後増える可能性があるため、未知の値も扱えるようにする</li>
+</ul>
+<p>出典: <a href="https://developers.google.com/workspace/calendar/api/v3/reference/freebusy/query">Freebusy.query (Google for Developers)</a></p>
+</section>
+
+<section class="ch02" id="ch02">
+<h1>スコープ</h1>
+<p>公式ページに 20 件が載っている。接頭辞はすべて <code>https://www.googleapis.com/auth/</code>。公式は「できるだけ範囲の狭いスコープを選ぶ」よう求めている。</p>
+<div class="tablewrap"><table>
+<thead><tr><th>用途</th><th>スコープ (接頭辞を省略)</th><th>概要</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">全体</td><td class="nowrap"><code>calendar</code></td><td>閲覧できるすべてのカレンダーの閲覧・編集・共有、完全削除</td></tr>
+<tr><td class="nowrap">全体</td><td class="nowrap"><code>calendar.readonly</code></td><td>閲覧できるカレンダーの閲覧・ダウンロード</td></tr>
+<tr><td class="nowrap">イベント</td><td class="nowrap"><code>calendar.events</code></td><td>すべてのカレンダーのイベントの閲覧・編集</td></tr>
+<tr><td class="nowrap">イベント</td><td class="nowrap"><code>calendar.events.readonly</code></td><td>すべてのカレンダーのイベントの閲覧</td></tr>
+<tr><td class="nowrap">イベント</td><td class="nowrap"><code>calendar.events.owned</code></td><td>所有カレンダーのイベントの作成・変更・削除</td></tr>
+<tr><td class="nowrap">イベント</td><td class="nowrap"><code>calendar.events.owned.readonly</code></td><td>所有カレンダーのイベントの閲覧</td></tr>
+<tr><td class="nowrap">イベント</td><td class="nowrap"><code>calendar.events.public.readonly</code></td><td>公開カレンダーのイベントの閲覧</td></tr>
+<tr><td class="nowrap">空き状況</td><td class="nowrap"><code>calendar.freebusy</code></td><td>予定の空き状況の確認</td></tr>
+<tr><td class="nowrap">空き状況</td><td class="nowrap"><code>calendar.events.freebusy</code></td><td>アクセスできるカレンダーの空き状況の閲覧</td></tr>
+<tr><td class="nowrap">カレンダー</td><td class="nowrap"><code>calendar.calendars</code></td><td>カレンダーのプロパティの変更、セカンダリカレンダーの作成</td></tr>
+<tr><td class="nowrap">カレンダー</td><td class="nowrap"><code>calendar.calendars.readonly</code></td><td>カレンダーのタイトル・説明・タイムゾーンなどの閲覧</td></tr>
+<tr><td class="nowrap">カレンダー</td><td class="nowrap"><code>calendar.app.created</code></td><td>セカンダリカレンダーの作成と、そのイベントの操作</td></tr>
+<tr><td class="nowrap">一覧</td><td class="nowrap"><code>calendar.calendarlist</code></td><td>購読中のカレンダーの閲覧・追加・削除</td></tr>
+<tr><td class="nowrap">一覧</td><td class="nowrap"><code>calendar.calendarlist.readonly</code></td><td>購読中のカレンダー一覧の閲覧</td></tr>
+<tr><td class="nowrap">共有</td><td class="nowrap"><code>calendar.acls</code></td><td>所有カレンダーの共有権限の閲覧・変更</td></tr>
+<tr><td class="nowrap">共有</td><td class="nowrap"><code>calendar.acls.readonly</code></td><td>所有カレンダーの共有権限の閲覧</td></tr>
+<tr><td class="nowrap">設定</td><td class="nowrap"><code>calendar.settings.readonly</code></td><td>カレンダー設定の閲覧</td></tr>
+<tr><td class="nowrap">アドオン</td><td class="nowrap"><code>calendar.addons.execute</code></td><td>カレンダーアドオンとしての実行</td></tr>
+<tr><td class="nowrap">アドオン</td><td class="nowrap"><code>calendar.addons.current.event.read</code></td><td>画面で開いたイベントの閲覧</td></tr>
+<tr><td class="nowrap">アドオン</td><td class="nowrap"><code>calendar.addons.current.event.write</code></td><td>画面で開いたイベントの編集</td></tr>
+</tbody></table></div>
+<div class="callout"><strong>IMPORTANT</strong><br>各スコープが sensitive か non-sensitive かを示す公式の一覧表は、見つからなかった。公式で確かめられたのは、次の 2 点だけ。<br>・Google の検証ガイドが、sensitive の例として「Google カレンダーに保存されたイベントの閲覧」を挙げている<br>・区分は、Cloud Console の Google Auth platform &gt; Data Access で、スコープを追加する画面に non-sensitive・sensitive・restricted の 3 つの節として出る (静的な一覧表ではない)</div>
+<h2>区分を探した範囲</h2>
+<ul>
+<li><strong>公式で探したが、スコープごとの区分は書かれていなかったページ:</strong> Calendar API のスコープ、OAuth 2.0 Scopes for Google APIs (Calendar の節)、Sensitive scope verification、OAuth 同意画面の設定ガイド</li>
+<li><strong>非公式 (参考。公式ではない):</strong> Nylas の開発者向けガイドは「Google は Calendar のスコープを sensitive に分類するため、本番のアプリは Google の OAuth 検証が要る」と書く。スコープごとの区分は示していない</li>
+</ul>
+<p>出典 (公式): <a href="https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification">Sensitive scope verification</a> ・ <a href="https://developers.google.com/workspace/guides/configure-oauth-consent">OAuth 同意画面の設定</a> ・ <a href="https://developers.google.com/identity/protocols/oauth2/scopes">OAuth 2.0 Scopes for Google APIs</a><br>
+出典 (非公式): <a href="https://developer.nylas.com/docs/cookbook/calendar/google-calendar-oauth/">How to use OAuth for Google Calendar (Nylas)</a></p>
+<p>範囲の選び方 (この資料の解釈): 閲覧だけなら <code>.readonly</code> 付きにする。自分の所有カレンダーだけを扱うなら、<code>calendar.events</code> より <code>calendar.events.owned</code> が狭い。空き状況だけなら <code>calendar.freebusy</code> で足りる可能性がある。公式の文面ではなく、スコープ名と概要からの推測。</p>
+<p>出典: <a href="https://developers.google.com/workspace/calendar/api/auth">Google Calendar API のスコープ (Google for Developers)</a></p>
+</section>
+
+<section class="ch03" id="ch03">
+<h1>クォータ</h1>
+<div class="tablewrap"><table>
+<thead><tr><th>種類</th><th>上限</th></tr></thead>
+<tbody>
+<tr><td>1 分あたり・プロジェクト</td><td class="num">10,000 リクエスト</td></tr>
+<tr><td>1 分あたり・プロジェクト × ユーザー</td><td class="num">600 リクエスト</td></tr>
+<tr><td>1 日あたり・プロジェクト (課金のしきい値)</td><td class="num">1,000,000 リクエスト</td></tr>
+</tbody></table></div>
+<ul>
+<li>1 分ごとのスライディングウィンドウで集計する。1 分間に上限を超えるバーストがあると、次のウィンドウで制限がかかることがある</li>
+<li>1 日 1,000,000 は、これを下回る範囲では課金が発生しないしきい値。引き上げの申請はできない。標準的な利用は追加料金なしだが、超えた分は 2026 年中に課金される予定とページにある。変更の前に少なくとも 90 日前の通知があるとされている</li>
+<li>超過すると <code>403 usageLimits</code> または <code>429 usageLimits</code> が返る</li>
+</ul>
+<h2>対処</h2>
+<ul>
+<li>指数バックオフで再試行する。待ち時間は <code>min((2^n) + ランダムミリ秒, maximum_backoff)</code>。ランダムは 1,000 ミリ秒以下で、再試行のたびに計算し直す。<code>maximum_backoff</code> は 32〜64 秒が目安。再試行の回数にも上限を設ける</li>
+<li>同じカレンダーへの短時間の連続書き込みは避ける。運用上の制限は予告なく変わることがある。間隔を空けるか、バッチリクエストを検討する</li>
+<li>定期同期の時刻をクライアントごとにずらし、間隔に ±25% ほどの揺らぎを持たせる</li>
+<li>ポーリングの代わりにプッシュ通知を使う</li>
+<li>ドメイン全体の委任を使うサービスアカウントでは、<code>quotaUser</code> パラメータ (または <code>x-goog-quota-user</code> ヘッダー) で実際のユーザーを指定する</li>
+</ul>
+<p>出典: <a href="https://developers.google.com/workspace/calendar/api/guides/quota">Calendar API のクォータの管理 (Google for Developers)</a></p>
+</section>
+
+<section class="ch04" id="ch04">
+<h1>プッシュ通知と増分同期</h1>
+<h2>プッシュ通知 (watch)</h2>
+<p>対象は <code>Acl</code>・<code>CalendarList</code>・<code>Events</code>・<code>Settings</code> の 4 種類。通知を受ける HTTPS のサーバーが要る。</p>
+<div class="tablewrap"><table>
+<thead><tr><th>watch の項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td class="nowrap"><code>id</code> (必須)</td><td>プロジェクト内で一意。最大 64 文字。UUID を推奨</td></tr>
+<tr><td class="nowrap"><code>type</code> (必須)</td><td><code>web_hook</code></td></tr>
+<tr><td class="nowrap"><code>address</code> (必須)</td><td>通知を受ける HTTPS の URL。有効な SSL 証明書が要る (自己署名・信頼されない発行元・失効・ホスト名の不一致は不可)</td></tr>
+<tr><td class="nowrap"><code>token</code></td><td>最大 256 文字。通知の検証や振り分けに使う。機密情報は入れない</td></tr>
+<tr><td class="nowrap"><code>expiration</code></td><td>ミリ秒の Unix タイムスタンプ</td></tr>
+</tbody></table></div>
+<ul>
+<li>作成の直後に <code>X-Goog-Resource-State: sync</code> の通知が届く。メッセージ番号は常に 1。watch の応答より先に届くことがある</li>
+<li>通知に本文は無い。変更の中身は、API を呼んで取る</li>
+<li><code>X-Goog-Resource-State</code> は <code>sync</code>・<code>exists</code>・<code>not_exists</code> のいずれか</li>
+<li>成功とみなす応答は 200・201・202・204・102。クライアントライブラリでは 500・502・503・504 で指数バックオフの再送がある</li>
+<li>止めるときは <code>https://www.googleapis.com/calendar/v3/channels/stop</code> に <code>id</code> と <code>resourceId</code> を POST する</li>
+<li><code>Events</code> と <code>Acl</code> は<strong>カレンダーごと</strong>、<code>Settings</code> と <code>CalendarList</code> は<strong>ユーザーごとに 1 回</strong>の購読で足りる</li>
+</ul>
+<div class="callout"><strong>WARNING</strong><br>チャネルに自動更新は無い。期限が近づいたら、新しい <code>id</code> で watch をもう一度呼ぶ (新旧が並行して有効な時間帯がある)。通知は一定の割合で欠落することがあり、届かなくても同期が進む作りにする。</div>
+<p>出典: <a href="https://developers.google.com/workspace/calendar/api/guides/push">Calendar API のプッシュ通知 (Google for Developers)</a></p>
+
+<h2>増分同期 (syncToken)</h2>
+<ol>
+<li><strong>初回の全同期:</strong> list で全件を取り、最後のページの <code>nextSyncToken</code> を保存する</li>
+<li><strong>増分同期:</strong> 保存した値を <code>syncToken</code> に入れて list する。結果には削除されたエントリも入る。<code>pageToken</code> が返ったら、最初と同じクエリに <code>pageToken</code> を足して順に取り、最後のページの新しい <code>syncToken</code> を保存する</li>
+<li><strong>410 GONE:</strong> トークンの期限切れや関連 ACL の変更で無効になると返る。ローカルのデータを全部消して、全同期からやり直す</li>
+</ol>
+<ul>
+<li>増分同期で使えるクエリパラメータには制限がある。初回を含めて、すべてのリクエストで同じパラメータの組を使う。許されない指定は <code>400</code></li>
+<li>期間で絞るなら初回の全同期で使う</li>
+<li>イベントの古い方式 (<code>updated</code> と <code>modifiedSince</code>) は取りこぼしやすく、非推奨</li>
+</ul>
+<p>出典: <a href="https://developers.google.com/workspace/calendar/api/guides/sync">Calendar API の増分同期 (Google for Developers)</a></p>
+</section>
+
+<section class="ch05" id="ch05">
+<h1>繰り返し予定</h1>
+<ul>
+<li><strong>作成:</strong> イベントの <code>recurrence</code> に RRULE を入れる (例: <code>RRULE:FREQ=WEEKLY;UNTIL=20110701T170000Z</code>)</li>
+<li><strong><code>events.list()</code> の既定:</strong> 単発の予定・繰り返しの親・例外だけを返す。例外ではないインスタンスは返さない</li>
+<li><strong><code>singleEvents=true</code>:</strong> 各インスタンスが個別に返るが、親は返らない。空き状況だけを見る権限のユーザーも、同じ動きになる</li>
+<li><strong><code>events.instances()</code>:</strong> 特定の繰り返し予定のインスタンスを全部取る</li>
+</ul>
+<h2>インスタンスの見分け方</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>フィールド</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td class="nowrap"><code>recurrence</code></td><td>親だけが持つ。インスタンスは持たない</td></tr>
+<tr><td class="nowrap"><code>recurringEventId</code></td><td>所属する親予定の ID</td></tr>
+<tr><td class="nowrap"><code>originalStartTime</code></td><td>親の繰り返しルール上の本来の開始時刻。日時が変えられていても、系列の中の位置を特定できる</td></tr>
+</tbody></table></div>
+<p>インスタンスの変更・削除は、取得したインスタンスへの PUT で行う。取り消すには <code>status</code> を <code>cancelled</code> にする。この操作で例外ができる。</p>
+<div class="callout"><strong>WARNING</strong><br>系列全体や「以降すべて」を変えたいときに、インスタンスを 1 つずつ変更しない。例外が大量にでき、カレンダーが煩雑になり、アクセスが遅くなり、通知も大量に送られる。</div>
+<p>出典: <a href="https://developers.google.com/workspace/calendar/api/guides/recurringevents">繰り返しイベント (Google for Developers)</a></p>
+</section>
+</div>
+<footer><div class="inner">
+<a class="back-home" style="margin-top:0" href="../../README.html" title="README へ戻る"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 8H3v6h4v-4h2v4h4V8h1.5z" fill="currentColor"/></svg></a>
+</div></footer>
+</body>
+</html>
